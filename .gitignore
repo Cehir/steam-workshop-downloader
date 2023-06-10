@@ -17,4 +17,5 @@
 .steam-workshop-downloader.yaml
 
 .idea
+.DS_Store
 dist/
