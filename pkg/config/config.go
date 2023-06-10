@@ -47,6 +47,31 @@ func (a *Apps) Strings() []string {
 	return s
 }
 
+func (a *Apps) CmdArgs() []string {
+	if a == nil {
+		return nil
+	}
+	var s []string
+	for _, app := range *a {
+		for _, mod := range app.Mods {
+			s = append(s, "+workshop_download_item", app.AppID, mod.WorkshopID)
+		}
+	}
+	return s
+}
+
+// Destinations returns a map of appID to destination path
+func (a *Apps) Destinations() map[string]string {
+	if a == nil {
+		return nil
+	}
+	m := make(map[string]string, len(*a))
+	for _, app := range *a {
+		m[app.AppID] = app.Path
+	}
+	return m
+}
+
 type Config struct {
 	Steam Steam `json:"steam" mapstructure:"steam" validate:"required"`                        // Steam config
 	Apps  Apps  `json:"apps,omitempty" mapstructure:"apps" validate:"omitempty,dive,required"` // List of games with mods to download
@@ -109,6 +134,33 @@ func (c *Config) PrintJSON() error {
 type Login struct {
 	Username string `json:"username" mapstructure:"username" validate:"required"` // Username
 	Password string `json:"password" mapstructure:"password"`                     // Password
+}
+
+// String returns the username and masked password if set
+func (l *Login) String() string {
+	if l == nil {
+		return ""
+	}
+	if l.Password != "" {
+		return fmt.Sprintf("%s:***", l.Username)
+	}
+	return l.Username
+}
+
+// Validate validates the login
+func (l *Login) Validate() error {
+	return Validator.Struct(l)
+}
+
+// Login for steamcmd
+func (l *Login) CmdArgs() []string {
+	if l == nil {
+		return nil
+	}
+	if l.Password != "" {
+		return []string{"+login", l.Username, l.Password}
+	}
+	return []string{"+login", l.Username}
 }
 
 type App struct {

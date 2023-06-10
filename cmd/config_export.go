@@ -11,10 +11,11 @@ import (
 
 // configShow represents the export command
 var configShow = &cobra.Command{
-	Use:   "show",
-	Short: "print the current config",
+	Use:     "show",
+	Short:   "print the current config",
+	Aliases: []string{"export"},
 	Run: func(cmd *cobra.Command, args []string) {
-		loadConfig()
+		loadConfig(true)
 		_ = out.Print(&cfg)
 	},
 }

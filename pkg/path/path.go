@@ -17,7 +17,7 @@ func NewPath() *Path {
 
 // Absolute returns the absolute path of the given path
 func (p *Path) Absolute(path string) (string, error) {
-	if path == "$HOME" || path == "~" {
+	if path == "$HOME" || path == "~" || path == "%userprofile%" {
 		return os.UserHomeDir()
 	}
 
@@ -35,6 +35,14 @@ func (p *Path) Absolute(path string) (string, error) {
 			return "", err
 		}
 		path = home + path[1:]
+	}
+
+	if strings.HasPrefix(path, "%userprofile%") {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return "", err
+		}
+		path = home + path[13:]
 	}
 
 	inPath := os.ExpandEnv(path)

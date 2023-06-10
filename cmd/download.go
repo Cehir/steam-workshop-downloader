@@ -16,7 +16,7 @@ var downloadCmd = &cobra.Command{
 	Use:   "download",
 	Short: "Download the configured mods",
 	Run: func(cmd *cobra.Command, args []string) {
-		loadConfig()
+		loadConfig(false)
 		c := steamcmd.NewSteamCmd(&cfg)
 		err := c.Download()
 		if err != nil {

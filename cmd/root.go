@@ -79,6 +79,9 @@ func initLogger() {
 	if verbose {
 		logger.SetLevel(logger.InfoLevel)
 	}
+	if veryVerbose {
+		logger.SetLevel(logger.DebugLevel)
+	}
 	logger.SetFormatter(&logger.TextFormatter{
 		FullTimestamp: true,
 		PadLevelText:  true,
@@ -91,7 +94,7 @@ func initConfig() {
 
 	viper.SetEnvPrefix("swd")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	viper.SetDefault("steam.cmd", "$HOME/Steam/steamcmd.sh")
+	viper.SetDefault("steam.cmd", config.DefaultSteamCMDPath())
 	viper.SetDefault("steam.login.username", "anonymous")
 	viper.SetDefault("steam.login.password", "")
 
@@ -102,11 +105,14 @@ func initConfig() {
 		// Find home directory.
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
-
-		// Search config in current folder
-		viper.AddConfigPath(".")
 		// Search config in home directory with name ".steam-workshop-downloader" (without extension).
 		viper.AddConfigPath(home)
+
+		// Search config in current folder
+		dir, err := os.Getwd()
+		cobra.CheckErr(err)
+		viper.AddConfigPath(dir)
+
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".steam-workshop-downloader")
 	}
@@ -116,26 +122,5 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		logger.Debug("Using config file:", viper.ConfigFileUsed())
-	}
-}
-
-func viperDefault(cmd *cobra.Command, key string, value interface{}) {
-	if err := viper.BindPFlag(key, cmd.Flags().Lookup(key)); err != nil {
-		logger.
-			WithField("key", key).
-			WithField("error", err).
-			Fatal("failed to bind flag to viper")
-		return
-	}
-	viper.SetDefault(key, value)
-}
-
-func markFlagRequired(cmd *cobra.Command, flag string) {
-	if err := cmd.MarkFlagRequired(flag); err != nil {
-		logger.
-			WithField("flag", flag).
-			WithField("error", err).
-			Fatal("failed to mark flag as required")
-		return
 	}
 }

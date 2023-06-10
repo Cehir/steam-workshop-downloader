@@ -1,0 +1,23 @@
+steam:
+  cmd: C:\steamcmd\steamcmd.exe
+  login:
+    username: anonymous
+apps:
+  - name: Project Zomboid
+    id: 108600
+    # It is important to use ' instead of " for the path quotes,
+    # otherwise the %userprofile% variable will not be expanded
+    path: '%userprofile%\Zomboid\mods'
+    mods:
+      - name: Mod Options
+        id: 2169435993
+      - name: Snow is Water
+        id: 2704811006
+      - name: Weapon Condition Indicator
+        id: 2619072426
+      - name: Wells Construction
+        id: 2852690210
+      - name: Wring Out Clothing
+        id: 2696083206
+      - name: Noir Attachments
+        id: 2754567348
