@@ -1,5 +1,5 @@
 package config
 
-func defaultSteamCMDPath() {
+func defaultSteamCMDPath() string {
 	return "$HOME/Steam/steamcmd.sh"
 }
