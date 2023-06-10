@@ -9,7 +9,6 @@ import (
 	logger "github.com/sirupsen/logrus"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"time"
 )
 
@@ -22,16 +21,6 @@ func NewSteamCmd(cfg *config.Config) *SteamCmd {
 		cfg: cfg,
 	}
 }
-
-// extractPathRegex extracts the path from the steamcmd output
-// download regex input example: Downloaded item 2169435993 to "C:\steamcmd\steamapps\workshop\content\108600\2169435993" (31729 bytes)
-// will return C:\steamcmd\steamapps\workshop\content\108600\2169435993
-var extractPathRegex = regexp.MustCompile(`Downloaded item \d+ to "(.+)" \(\d+ bytes\)`)
-
-// appIDRegex extract workshop id from path
-// example: C:\steamcmd\steamapps\workshop\content\108600\2169435993
-// will return 108600
-var appIDRegex = regexp.MustCompile(`content\\(\d+)\\`)
 
 func (s *SteamCmd) Download() error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute*5)
